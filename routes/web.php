@@ -12,5 +12,17 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
-});
+    return view('index');
+})->name('site.home');
+
+Route::get('/tweet', function () {
+    return view('tweet');
+})->name('site.tweet');
+
+Route::get('/tweer/{id}/delete', function () {
+    return view('delete');
+})->name('site.delete');
+
+Route::get('/hashtags/{hashtag}', function () {
+    return view('index');
+})->name('site.hashtags');
