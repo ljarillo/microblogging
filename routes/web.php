@@ -19,10 +19,8 @@ Route::get('/tweet', function () {
     return view('tweet');
 })->name('site.tweet');
 
-Route::get('/tweer/{id}/delete', function () {
-    return view('delete');
-})->name('site.delete');
+// Route::get('/tweer/{id}/delete', 'TweetController@update')->name('site.delete');
 
-Route::get('/hashtags/{hashtag}', function () {
-    return view('index');
-})->name('site.hashtags');
+// Route::get('/hashtags/{hashtag}', '')->name('site.hashtags');
+
+Route::post('tweet/store', 'TweetController@store')->name('tweet.store');

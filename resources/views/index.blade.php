@@ -6,5 +6,6 @@
     </head>
     <body>
 
+        <p>{{ date('d/m/Y H:i', strtotime($var->created_at)) }}</p>
     </body>
 </html>

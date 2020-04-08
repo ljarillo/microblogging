@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Tweet;
+use App\Hashtag;
 use Illuminate\Http\Request;
 
 class TweetController extends Controller
@@ -35,7 +36,21 @@ class TweetController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $tweet = new Tweet();
+        $tweet->user = $request->username;
+        $tweet->tweet = $request->tweet;
+        $tweet->save();
+
+        $hashtags = $this->searchHashtags($tweet->tweet);
+        foreach ($hashtags as $value) {
+            $hashtag = new Hashtag();
+            $hashtag->tweet_id = $tweet->id;
+            $hashtag->hashtag = $value;
+            $hashtag->save();
+        }
+
+        dd($tweet);
+        return view('index', $data);
     }
 
     /**
@@ -81,5 +96,15 @@ class TweetController extends Controller
     public function destroy(Tweet $tweet)
     {
         //
+    }
+
+    function searchHashtags($string) {
+        $hashtags = array();
+        preg_match_all("/#(\w+)/u", $string, $matches);
+        if ($matches) {
+            $hashtagsArray = array_count_values($matches[1]);
+            $hashtags = array_keys($hashtagsArray);
+        }
+        return $hashtags;
     }
 }
