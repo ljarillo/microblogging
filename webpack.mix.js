@@ -15,4 +15,5 @@ mix
     .sass('resources/views/scss/style.scss', 'public/css/style.css')
 
     .scripts('node_modules/jquery/dist/jquery.js', 'public/js/jquery.js')
-    .scripts('node_modules/bootstrap/dist/js/bootstrap.bundle.js', 'public/js/bootstrap.js');
+    .scripts('node_modules/bootstrap/dist/js/bootstrap.js', 'public/js/bootstrap.js')
+    .sourceMaps();

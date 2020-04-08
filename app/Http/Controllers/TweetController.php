@@ -15,7 +15,14 @@ class TweetController extends Controller
      */
     public function index()
     {
-        //
+        $tweets = Tweet::orderBy('created_at','desc')->take(20)->get();
+        foreach ($tweets as $tweet) {
+            $tweet->tweet = Hashtag::linkToHashtag($tweet->tweet);
+        }
+
+        return view('index', [
+            'tweets' => $tweets,
+        ]);
     }
 
     /**
@@ -36,12 +43,22 @@ class TweetController extends Controller
      */
     public function store(Request $request)
     {
+        if(is_null($request->username)){
+            return redirect()->route('tweet.new',['msg' => 'O tweet excedeu o máximo de 280 caracteres.', 'username' => '', 'tweet' => $request->tweet]);
+        }
+        if(is_null($request->tweet)){
+            return redirect()->route('tweet.new',['msg' => 'O tweet excedeu o máximo de 280 caracteres.', 'username' => $request->username, 'tweet' => '']);
+        }
+        if(strlen($request->tweet) > 280){
+            return redirect()->route('tweet.new',['msg' => 'O tweet excedeu o máximo de 280 caracteres.', 'username' => $request->username, 'tweet' => $request->tweet]);
+        }
+
         $tweet = new Tweet();
-        $tweet->user = $request->username;
+        $tweet->user = strtolower($request->username);
         $tweet->tweet = $request->tweet;
         $tweet->save();
 
-        $hashtags = $this->searchHashtags($tweet->tweet);
+        $hashtags = Hashtag::searchHashtags($tweet->tweet);
         foreach ($hashtags as $value) {
             $hashtag = new Hashtag();
             $hashtag->tweet_id = $tweet->id;
@@ -49,8 +66,20 @@ class TweetController extends Controller
             $hashtag->save();
         }
 
-        dd($tweet);
-        return view('index', $data);
+        return redirect()->route('tweet.index');
+    }
+
+    public function tweet(Request $request)
+    {
+        $msgError = (is_null($request->msg)) ? '' : $request->msg;
+        $username = (is_null($request->username)) ? '' : $request->username;
+        $tweet = (is_null($request->tweet)) ? '' : $request->tweet;
+
+        return view('tweet', [
+            'msgError' => $msgError,
+            'username' => $request->username,
+            'tweet' => $request->tweet,
+        ]);
     }
 
     /**
@@ -61,7 +90,7 @@ class TweetController extends Controller
      */
     public function show(Tweet $tweet)
     {
-        return $tweet->hashtags()->get();
+        //
     }
 
     /**
@@ -96,15 +125,5 @@ class TweetController extends Controller
     public function destroy(Tweet $tweet)
     {
         //
-    }
-
-    function searchHashtags($string) {
-        $hashtags = array();
-        preg_match_all("/#(\w+)/u", $string, $matches);
-        if ($matches) {
-            $hashtagsArray = array_count_values($matches[1]);
-            $hashtags = array_keys($hashtagsArray);
-        }
-        return $hashtags;
     }
 }

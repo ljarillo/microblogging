@@ -11,16 +11,7 @@
 |
 */
 
-Route::get('/', function () {
-    return view('index');
-})->name('site.home');
-
-Route::get('/tweet', function () {
-    return view('tweet');
-})->name('site.tweet');
-
-// Route::get('/tweer/{id}/delete', 'TweetController@update')->name('site.delete');
-
-// Route::get('/hashtags/{hashtag}', '')->name('site.hashtags');
-
+Route::get('/tweet', 'TweetController@tweet')->name('tweet.new');
+Route::get('/hashtags/{hashtag}', 'HashtagController@index')->name('hashtag.index');
+Route::get('/', 'TweetController@index')->name('tweet.index');
 Route::post('tweet/store', 'TweetController@store')->name('tweet.store');
