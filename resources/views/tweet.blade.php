@@ -2,13 +2,16 @@
 <html lang="pt">
     <head>
         <meta charset="utf-8">
-        <title></title>
+        <title>Tweetar - Microblogging</title>
         <link rel="stylesheet" href="{{ asset('css/bootstrap.css') }}">
     </head>
     <body class="bg-light">
         <div class="container">
             <div class="py-5 text-center">
                 <h2>Novo tweet</h2>
+            </div>
+            <div class="alert alert-danger" role="alert" {{ empty($msgError) ? 'hidden' : '' }}>
+                {{ $msgError }}
             </div>
 
             <div class="row">
@@ -20,7 +23,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">@</span>
                                 </div>
-                                <input type="text" class="form-control" id="username" name="username" placeholder="Username" required>
+                                <input type="text" class="form-control" id="username" name="username" placeholder="Username" value="{{ empty($username) ? '' : $username }}" required>
                                 <div class="invalid-feedback" style="width: 100%;">
                                     Seu username é requerido.
                                 </div>
@@ -28,7 +31,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <textarea name="tweet" class="form-control" rows="4" cols="80" required></textarea>
+                            <textarea name="tweet" class="form-control" rows="4" cols="80" required>{{ empty($tweet) ? '' : $tweet }}</textarea>
                             <div class="invalid-feedback">
                                 Seu tweet é requerido.
                             </div>
