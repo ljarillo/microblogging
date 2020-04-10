@@ -13,15 +13,19 @@ class TweetController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($msg = null)
     {
-        $tweets = Tweet::orderBy('created_at','desc')->take(20)->get();
+        $tweets = Tweet::
+            orderBy('created_at','desc')
+            ->take(20)
+            ->get();
         foreach ($tweets as $tweet) {
             $tweet->tweet = Hashtag::linkToHashtag($tweet->tweet);
         }
 
         return view('index', [
-            'tweets' => $tweets,
+            'tweets'    => $tweets,
+            'msg'       => $msg,
         ]);
     }
 
@@ -44,10 +48,10 @@ class TweetController extends Controller
     public function store(Request $request)
     {
         if(is_null($request->username)){
-            return redirect()->route('tweet.new',['msg' => 'O tweet excedeu o máximo de 280 caracteres.', 'username' => '', 'tweet' => $request->tweet]);
+            return redirect()->route('tweet.new',['msg' => 'O user é requerido', 'username' => '', 'tweet' => $request->tweet]);
         }
         if(is_null($request->tweet)){
-            return redirect()->route('tweet.new',['msg' => 'O tweet excedeu o máximo de 280 caracteres.', 'username' => $request->username, 'tweet' => '']);
+            return redirect()->route('tweet.new',['msg' => 'O tweet é requerido', 'username' => $request->username, 'tweet' => '']);
         }
         if(strlen($request->tweet) > 280){
             return redirect()->route('tweet.new',['msg' => 'O tweet excedeu o máximo de 280 caracteres.', 'username' => $request->username, 'tweet' => $request->tweet]);
@@ -122,8 +126,16 @@ class TweetController extends Controller
      * @param  \App\Tweet  $tweet
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Tweet $tweet)
+    public function destroy($id)
     {
-        //
+        $tweet = Tweet::where('id', $id)->first() ?? '';
+        if(!empty($tweet)){
+            $tweet->delete();
+            $msg = 'Tweet removido com sucesso';
+        } else {
+            $msg = 'Tweet não encontrado';
+        }
+
+        return redirect()->route('tweet.index', $msg);
     }
 }
