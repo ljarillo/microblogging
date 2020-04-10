@@ -15,6 +15,10 @@
         user-select: none;
     }
 
+    .container {
+        margin-top: 30px;
+    }
+
     @media (min-width: 768px) {
         .bd-placeholder-img-lg {
             font-size: 3.5rem;
@@ -24,6 +28,9 @@
 </head>
 <body class="bg-light">
     <main role="main" class="container">
+        <div class="alert alert-danger" role="alert" {{ empty($msg) ? 'hidden' : '' }}>
+          {{ $msg }}
+        </div>
         <div class="my-3 p-3 bg-white rounded shadow-sm">
             @if (! isset($hashtag))
                 <h6 class="border-bottom border-gray pb-2 mb-0">Recente tweets</h6>
@@ -36,6 +43,12 @@
                         <strong class="d-block text-gray-dark">{{ '@' . $tweet->user }}</strong>
                         {!! $tweet->tweet !!}
                         <br><small>{{ date('d/m/Y H:i', strtotime($tweet->created_at)) }}</small>
+                        <form class="" action="{{ route('tweet.destroy', $tweet->id) }}" method="post">
+                            {{ csrf_field() }}
+                            {{ method_field('DELETE') }}
+                            <input type="submit" class="btn btn-danger" name="button" value="excluir">
+                            {{-- <button type="submit" class="btn btn-danger" name="button"></button> --}}
+                        </form>
                     </p>
                 </div>
             @endforeach
